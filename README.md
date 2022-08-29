@@ -1,4 +1,4 @@
-## GitHub Repository for Course "Learning from Big Data"
+## GitHub Repository for Course "Learning from Big Data 2022/23"
 
 
 ### README content
