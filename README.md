@@ -87,7 +87,7 @@ If `make` does not work on your computer run the steps included in the [Makefile
 
 ### Course preparation
 
-Please solve the following three pre-course assignments before the first lecture.
+Please try to work on the following three pre-course assignments before the first lecture of module 2.
 
 - [Notebook 1: Data Tasks](preparation/notebook-1-data.ipynb)
 - [Notebook 2: ML Metrics](preparation/notebook-2-metrics.ipynb)
