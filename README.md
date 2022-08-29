@@ -9,7 +9,7 @@
 * [Requirements](#requirements)
 * [Setup](#setup)
   * [Makefile targets](#makefile-targets)
-* [Step-by-step instructions](#step-by-step-instructions)
+  * [Step-by-step instructions](#step-by-step-instructions)
 * [Course preparation](#course-preparation)
 * [Lecture notebooks](#lecture-notebooks)
 
@@ -65,7 +65,7 @@ Make targets:
 Check the Makefile for more details
 ```
 
-### Step-by-step instructions
+#### Step-by-step instructions
 
 1. Open a terminal and navigate to the path that you want to clone the repository to
 1. Clone the repository
