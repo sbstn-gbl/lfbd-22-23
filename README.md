@@ -1,19 +1,9 @@
+<img src="https://raw.githubusercontent.com/sbstn-gbl/learning-from-big-data/master/source/_static/img/logo-rsm.png" align="right" width="150px">
+
 ## GitHub Repository for Course "Learning from Big Data 2022/23"
 
 
 ### README content
-
-<!-- vim-markdown-toc GFM -->
-
-* [Repository content](#repository-content)
-* [Requirements](#requirements)
-* [Setup](#setup)
-  * [Makefile targets](#makefile-targets)
-  * [Step-by-step instructions](#step-by-step-instructions)
-* [Course preparation](#course-preparation)
-* [Lecture notebooks](#lecture-notebooks)
-
-<!-- vim-markdown-toc -->
 
 
 ### Repository content
@@ -83,6 +73,16 @@ Check the Makefile for more details
     ```
 
 If `make` does not work on your computer run the steps included in the [Makefile](./Makefile) manually. You only need to do this setup once.
+
+#### GIFs
+
+Clone repository and run `make build`:
+
+<img src="https://raw.githubusercontent.com/sbstn-gbl/learning-from-big-data/master/source/_static/img/make_build.gif" width="700px">
+
+Start Jupyter lab with `make run`:
+
+<img src="https://raw.githubusercontent.com/sbstn-gbl/learning-from-big-data/master/source/_static/img/make_run.gif" width="700px">
 
 
 ### Course preparation
