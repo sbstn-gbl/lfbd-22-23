@@ -4,9 +4,11 @@ gensim
 graphviz
 grip
 isort
+ipywidgets
 jupyterlab
 jupyterlab-code-formatter
 loguru
+line-profiler
 matplotlib
 numpy
 pandas
@@ -20,4 +22,4 @@ tensorboard
 tensorflow
 torch
 tqdm
-line-profiler
+PyYAML
