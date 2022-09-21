@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/sbstn-gbl/learning-from-big-data/master/source/_static/img/logo-rsm.png" align="right" width="150px">
 
-## GitHub Repository for Course "Learning from Big Data 2022/23"
+## GitHub Repository for Course "Learning from Big Data 2022/23" (Modules 2 and 3)
 
 
 ### README content
