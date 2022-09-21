@@ -84,6 +84,9 @@ Start Jupyter lab with `make run`:
 
 <img src="https://raw.githubusercontent.com/sbstn-gbl/learning-from-big-data/master/source/_static/img/make_run.gif" width="700px">
 
+#### Windows
+
+See Canvas.
 
 ### Course preparation
 
