@@ -110,4 +110,7 @@ Use textbooks or online resources to fill gaps in your skills. The pre-course as
 - [Lecture 05-1: Logistic Regression (Motivation)](lectures/l05-1-binary-classification-motivation.ipynb)
 - [Lecture 05-2: Missing Data](lectures/l05-2-missing-data.ipynb)
 - [Lecture 05-3: Logistic Regression w/ MBGD](lectures/l05-3-binary-classification-mbgd.ipynb)
+- [Lecture 06-1: Decision Trees](lectures/l06-1-decision-trees.ipynb)
+- [Lecture 06-2: Representations](lectures/l06-2-representations.ipynb)
+- [Lecture 06-3: Dimensionality Reduction](lectures/l06-3-dimensionality-reduction.ipynb)
 
