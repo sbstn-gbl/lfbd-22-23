@@ -1,0 +1,308 @@
+---
+title: "Tutorial Assignment 2"
+output:
+  html_document:
+    df_print: paged
+date: '2022-10-03'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy.opts=list(width.cutoff=60),tidy=TRUE)
+```
+
+## Tutorial Assignment 2
+```{r, echo = T, results = 'hide', error=FALSE, warning=FALSE, message=FALSE}
+library(dplyr)
+library(plyr)
+library(reshape2)
+library(MLmetrics)
+library(stargazer)
+library(caret)
+library(arrow)
+```
+
+```{r}
+LogLoss=function(actual, predicted)
+{
+  result=-1/length(actual)*(sum((actual*log(predicted)+(1-actual)*log(1-predicted))))
+  return(result)
+}
+
+```
+
+
+
+```{r}
+# score function: binary cross entropy loss
+score_yp <- function(y, p){ # y, p are arrays
+    return(LogLoss(y,p))
+  }
+```
+
+```{r}
+# score wrapper, for data frames. we need this when using the `truth` data frame
+score <- function(x, y){ # x, y are data frames
+    xy <- merge(x,y, by = c("customer", "product", "week"), all.x = TRUE)
+    return(score_yp(xy$y, xy$probability))
+}
+```
+
+## Inputs
+```{r}
+# INPUT
+training_week <- 88  # for model training
+validation_week <- 89  # for model and baseline validation
+test_week <- 90  # for the final prediction (one week in the future, beyond our data)
+target_customers <- c(0:1999)
+target_products <- c(0:249)
+```
+
+## Load Data
+```{r}
+baskets <- read_parquet('/Users/george/Documents/Python_Stuff/LFBD Tutorials/baskets-s.parquet', as_data_frame = TRUE)
+
+head(baskets)
+```
+```{r}
+prediction_index <- read_parquet('/Users/george/Documents/Python_Stuff/LFBD Tutorials/prediction_index (1).parquet', as_data_frame = TRUE)
+```
+
+## Some First Steps
+```{r}
+max(baskets$week)
+```
+```{r}
+n_weeks <- length(unique(baskets$week))
+print(n_weeks)
+```
+
+```{r}
+# purchase frequency for one customer and product
+nrow(subset(baskets, baskets$customer == 0 & baskets$product == 4, select = week))/n_weeks
+```
+
+```{r}
+purchase_frequency_ij <- baskets %>% group_by(customer,product) %>% tally()
+purchase_frequency_ij$n <- purchase_frequency_ij$n/n_weeks
+colnames(purchase_frequency_ij) = c("customer", "product", "probability")
+```
+
+```{r}
+test_week
+```
+
+```{r}
+# add all missing values
+# Q1: what values are missing?
+# Q2: what is a good value for probabilities here?
+df = data.frame(week = test_week, customer = rep(target_customers,each = length(target_products)), product = rep(target_products,length(target_customers)))
+df
+```
+```{r}
+result_baseline <- merge(df,purchase_frequency_ij,by = c("customer","product"), all.x = TRUE)
+result_baseline[is.na(result_baseline)] <- 0
+result_baseline
+```
+
+## SOLUTION 1: Descriptive feature (past purchase rates) = Baseline
+
+Now we have predictions, but we have no idea how good this baseline is.  So let's do the following:
+1. construct a ground truth data set
+
+2. do a proper train/validation split
+
+3. predict purchase probabilities using our baseline
+
+4. evaluate the predictions vs. the base
+
+### Validation
+```{r}
+# function to define target variable for all customer-product combinations (in a given week)
+
+build_target <- function(baskets, week){
+  baskets_week <- select(subset(baskets,week == week),week, customer, product)
+  baskets_week$y <- 1
+  
+  df = data.frame(week = week, customer = rep(target_customers,each = length(target_products)), product = rep(target_products,length(target_customers)))
+  
+  df <- merge(df,baskets_week,by = c("week","customer","product"), all.x =TRUE)
+  df[is.na(df)] <- 0
+  
+  return(df)
+}
+```
+```{r}
+validation_week
+```
+
+```{r}
+baseline_target <- build_target(baskets, validation_week)
+head(baseline_target)
+```
+```{r}
+stargazer(baseline_target,type = 'text')
+```
+
+
+```{r}
+# wrap code into function:
+# baseline = purchase rates for customer-product combinations before the target week
+baseline_prediction <- function(baskets, week_t){
+  # subset baskets
+  baskets_t <- subset(baskets,week < week_t)
+  n_weeks <- length(unique(baskets_t$week))
+  print(n_weeks)
+  
+  # model (non-0 probabilities)
+  purchase_frequency_ij <- baskets_t %>% group_by(customer,product) %>% tally()
+  purchase_frequency_ij$n <- purchase_frequency_ij$n/n_weeks
+  colnames(purchase_frequency_ij) = c("customer", "product", "probability")
+  
+      # filling in 0s
+  df = data.frame(week = week_t, customer = rep(target_customers,each = length(target_products)), product = rep(target_products,length(target_customers)))
+  
+  result_baseline <- merge(df,purchase_frequency_ij,by = c("customer","product"), all.x =TRUE)
+  result_baseline[is.na(result_baseline)] <- 0
+  
+  return(result_baseline)
+
+}
+
+
+```
+
+```{r}
+# prediction for validation data
+baseline_validation <- baseline_prediction(baskets, validation_week)
+head(baseline_validation)
+```
+
+```{r}
+baseline_target
+```
+```{r}
+baseline_validation
+```
+
+### Test
+
+```{r}
+validation_week + 1
+```
+
+```{r}
+# prediction for test data
+# we can't evaluate this
+baseline_test = baseline_prediction(baskets, test_week)
+baseline_test
+```
+
+Conclusion:
+1. Train model to week 88, evaluate predictions for week 89 with truth data 
+
+2. Predict week 90, and submit
+
+## SOLUTION 2: simple machine learning model   
+
+### Example for constructing the features
+```{r}
+build_frequency_feature <- function(baskets, week_start, week_end, feature_name){
+  # subset baskets
+  baskets_subset <- subset(baskets,week >= week_start & week <= week_end)
+  n_weeks <- length(unique(baskets_subset$week))
+  print(n_weeks)
+  
+  purchase_frequency_ij <- baskets_subset %>% group_by(customer,product) %>% tally()
+  purchase_frequency_ij$n <- purchase_frequency_ij$n/n_weeks
+  colnames(purchase_frequency_ij) = c("customer", "product", feature_name)
+  
+  return(purchase_frequency_ij)
+}
+```
+
+```{r}
+build_frequency_feature(baskets, -1, training_week - 1, "frequency_full")
+```
+
+```{r}
+build_base_table <- function(baskets,week){
+  # target variable (product purchase)
+  # consider using multiple weeks for training! more data might lead to better results.
+  # also, different weeks might have different information.
+  
+  y <- build_target(baskets, week)
+  
+  x_1 <- build_frequency_feature(baskets, -1, week - 1, "frequency_full")
+  x_2 <- build_frequency_feature(baskets, week - 30, week - 1, "frequency_l30")
+  x_3 <- build_frequency_feature(baskets, week - 5, week - 1, "frequency_l5")
+  
+  base_table_yx <- merge(merge(merge(y,x_1, by = c('customer','product'),all.x = TRUE),x_2, by = c('customer','product'),all.x = TRUE),x_3, by = c('customer','product'),all.x = TRUE)
+  
+  base_table_yx[is.na(base_table_yx)] <- 0
+
+  return(base_table_yx)
+}
+
+```
+
+```{r}
+build_base_table(baskets, training_week)
+```
+
+### Training: Train model (week < 89)
+```{r}
+base_table_train = build_base_table(baskets, training_week)
+```
+
+```{r}
+log_reg <- glm(y ~ frequency_full + frequency_l30 + frequency_l5, data = base_table_train, family = "binomial")
+```
+
+```{r}
+stargazer(log_reg, type = 'text')
+```
+
+```{r}
+base_table_train$probability <- log_reg$fitted.values
+```
+
+```{r}
+score_yp(
+    base_table_train$y,
+    base_table_train$probability
+)
+```
+
+### Validation: Test model performance (week 89)
+
+```{r}
+base_table_validation <- build_base_table(baskets, validation_week)
+```
+
+```{r}
+base_table_validation$probability <-predict(log_reg, base_table_validation, type="response")
+```
+
+```{r}
+score_yp(
+    base_table_validation$y,
+    base_table_validation$probability
+)
+```
+
+### Test: Produce final result for submission (week 90)
+
+We can't evaluate this prediction because we don't have this data -- that's why we need the validation set! 
+
+```{r}
+base_table_test = build_base_table(baskets, test_week)
+```
+
+```{r}
+base_table_test$probability = predict(log_reg, base_table_test, type="response")
+```
+
+```{r}
+base_table_test
+```
+
