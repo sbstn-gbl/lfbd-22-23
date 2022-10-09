@@ -117,3 +117,12 @@ Use textbooks or online resources to fill gaps in your skills. The pre-course as
 - [Lecture 07-2: Gradient Boosting](lectures/l07-2-gradient-boosting.ipynb)
 - [Lecture 07-3: Overfitting](lectures/l07-3-overfitting.ipynb)
 
+### Module 3
+- [Lecture 09-1: NN Activation Functions](lectures/l09-1-activation-functions.ipynb)
+- [Lecture 09-2: NN and PyTorch Autograd](lectures/l09-2-gradient-descent-revisited.ipynb)
+- [Lecture 09-3: NN Backpropagation](lectures/l09-3-back-propagation.ipynb)
+- [Lecture 09-4: NN Example Implementation](lectures/l09-4-nn-spiral.ipynb)
+- [Lecture 09-5: NN Generalization](lectures/l09-5-generalization.ipynb)
+- [Lecture 11-1: NN TensorBoard](lectures/l11-1-tensorboard.ipynb)
+- [Lecture 11-2: NN Optimizer](lectures/l11-2-optimizers.ipynb)
+- [Lecture 11-3: NN Initialization](lectures/l11-3-weight-initialization.ipynb)

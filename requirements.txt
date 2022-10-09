@@ -19,7 +19,7 @@ seaborn
 sklearn
 statsmodels
 tensorboard
-tensorflow
+tensorflow-cpu
 torch
 tqdm
 PyYAML
