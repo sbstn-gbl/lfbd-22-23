@@ -1,0 +1,22 @@
+# YAML files support comments :)
+author: sebastian
+version: v1.1
+project: big-data
+dataset:
+    small  # select the data set you want to use
+data:
+    seed: 1234
+    small:
+        D1: 4
+        D2: 3
+        N: 3
+    large:
+        D1: 1000
+        D2: 500
+        N: 1000
+model:
+    tsne:
+        n_components: 2
+        perplexity: 30
+        init: "random"
+        random_state: 1234

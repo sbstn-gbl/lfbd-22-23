@@ -1,0 +1,28 @@
+trainer:
+    epochs: 10
+p2v:
+    size: 25
+data:
+    data_streamer:
+        variable_basket: basket
+        variable_product: product
+        batch_size: 8192
+        n_negative_samples: 10
+        power: 0.75
+        shuffle: False
+        allow_context_collisions: False
+    split:
+        test_size: 0.05
+    train:
+        batch_size: 1024
+        shuffle: True
+        drop_last: True
+    valid:
+        batch_size: 4096
+        shuffle: False
+        drop_last: False
+    test:
+        batch_size: 4096
+        shuffle: False
+        drop_last: False
+

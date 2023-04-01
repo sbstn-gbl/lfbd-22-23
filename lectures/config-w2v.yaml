@@ -1,0 +1,23 @@
+baskets_df_to_list:
+    min_basket_size: 3
+    shuffle: True
+    to_string: True
+    seed: 123
+Word2Vec:
+    vector_size: 25
+    window: 1_000
+    min_count: 1
+    alpha: 0.025
+    min_alpha: 0.0001
+    sample: 0.001
+    sg: 1
+    negative: 10
+    epochs: 3
+TSNE:
+    n_components: 2
+    n_iter: 4_000
+    perplexity: 5
+    init: "pca"
+    angle: 0.5
+    random_state: 123
+    verbose: 0
